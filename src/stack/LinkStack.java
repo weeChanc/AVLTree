@@ -1,7 +1,5 @@
 package stack;
 
-import com.google.gson.Gson;
-import stack.AbsStack;
 
 public class LinkStack<E> extends AbsStack<E> {
 
@@ -61,10 +59,6 @@ public class LinkStack<E> extends AbsStack<E> {
         StackNode<E> next;
     }
 
-    @Override
-    public String toString() {
-        return new Gson().toJson(head);
-    }
 }
 
 

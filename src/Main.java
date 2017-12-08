@@ -1,31 +1,30 @@
 import avl_tree.AVLTree;
+import avl_tree.AVLTreeNode;
+import queue.LinkQueue;
 
-import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 
 public class Main {
 
+    static int i = 0 ;
     public static void main(String[] args) throws IOException {
+
         AVLTree<Integer> tree = new AVLTree<>();
-        
-        int[] ints = create();
-        
-        for(int i : ints){
-            tree.insert(i);
-        }
-        
-        for(int e : tree.iterator()){
-            System.out.println(e);
-        }
-        
+
+            while(i < 20) {
+                i++;
+                tree.insert(i);
+            }
+
+
+
+
+        JFrame shower = new TreeShow(tree);
+        shower.setExtendedState( Frame.MAXIMIZED_BOTH );
 
     }
 
-    static int[] create(){
-        int[] ints = new int[999];
-        for(int i = 0; i < 999 ; i++){
-            ints[i] = (int) (Math.random() * 9999);
-        }
-       return ints;
-    }
 
 }

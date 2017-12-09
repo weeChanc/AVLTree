@@ -11,7 +11,9 @@ public class AVLTreeNode<E extends Comparable<E>> implements Cloneable {
 
     public AVLTreeNode(E data) {
         this.data = data;
+    }
 
+    public AVLTreeNode() {
     }
 
     private boolean isLeaf() {

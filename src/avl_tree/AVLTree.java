@@ -1,7 +1,7 @@
 package avl_tree;
 
 
-
+import com.google.gson.Gson;
 
 public class AVLTree<E extends Comparable<E>> {
 
@@ -18,6 +18,8 @@ public class AVLTree<E extends Comparable<E>> {
 
     private boolean taller = false;
     private boolean shorter = false;
+
+    AVLTreeNode<E> CANFIND = new AVLTreeNode<>();
 
     @Override
     public String toString()
@@ -158,7 +160,7 @@ public class AVLTree<E extends Comparable<E>> {
 
     private AVLTreeNode<E> delete(E element, AVLTreeNode<E> node) {
 
-        if(node == null) return null;
+        if(node == null) return CANFIND;
 
         int cmpResult = element.compareTo(node.data);
         if (cmpResult == 0) {
@@ -182,13 +184,22 @@ public class AVLTree<E extends Comparable<E>> {
 //
 //                    newNode.lChild = node.lChild;
 //                    newNode.rChild = node.rChild;\\
-                    node.lChild = delete(newNode.data, node.lChild);
+//                    node.lChild = delete(newNode.data, node.lChild);
+
+                    AVLTreeNode<E> deleted = delete(newNode.data,node.lChild);
+                    if(deleted != CANFIND) {
+                        node.lChild = deleted;
+                    }else{
+                        shorter = false;
+                        return node;
+                    }
+
                     node.data = newNode.data;
                     if (shorter) {
                         switch (node.balance) {
                             case LH:
                                 node.balance = EH;
-                                shorter = false;
+                                shorter = true;
                                 break;
                             case EH:
                                 shorter = false;
@@ -206,12 +217,21 @@ public class AVLTree<E extends Comparable<E>> {
             }
             //从右子树中删除
         } else if (cmpResult > 0) {
-            node.rChild = delete(element, node.rChild);
+//            node.rChild = delete(element, node.rChild);
+
+            AVLTreeNode<E> deleted = delete(element,node.rChild);
+            if(deleted != CANFIND) {
+                node.rChild = deleted;
+            }else{
+                shorter = false;
+                return node;
+            }
+
             if (shorter) {
                 switch (node.balance) {
                     case LH:
-                        node = leftBalance(node);
                         shorter = node.lChild.balance != EH;
+                        node = leftBalance(node);
                         break;
                     case RH:
                         node.balance = EH;
@@ -225,7 +245,14 @@ public class AVLTree<E extends Comparable<E>> {
             }
             //从左子树中删除
         } else  {
-            node.lChild = delete(element, node.lChild);
+
+            AVLTreeNode<E> deleted = delete(element,node.lChild);
+            if(deleted != CANFIND) {
+                node.lChild = deleted;
+            }else{
+                shorter = false;
+                return node;
+            }
 
             if (shorter) {
                 switch (node.balance) {
@@ -238,8 +265,13 @@ public class AVLTree<E extends Comparable<E>> {
                         shorter = false;
                         break;
                     case RH:
-                        node = rightBalance(node);
                         shorter = node.rChild.balance != EH;
+                        node = rightBalance(node);
+                        if(node.rChild == null){
+                            System.out.println(new Gson().toJson(node));
+                            System.out.println("null of rChild");
+                        }
+
                 }
             }
 //            else{
@@ -300,11 +332,12 @@ public class AVLTree<E extends Comparable<E>> {
                 break;
 
 
+                //删除左子树救节点的时候,右边出现不平衡
             case EH:
                 //删除出现的情况
                 System.out.println("执行");
                 node.balance = RH;
-                node.lChild.balance = LH;
+                node.rChild.balance = LH;
                 node = leftRotate(node);
                 break;
         }

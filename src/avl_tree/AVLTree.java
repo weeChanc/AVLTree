@@ -1,25 +1,26 @@
 package avl_tree;
 
-
-import com.google.gson.Gson;
-
+/**
+ * @param <E>
+ * 平衡二叉树
+ * E是储存元素的泛型
+ */
 public class AVLTree<E extends Comparable<E>> {
+    public AVLTree() {
+    }
 
-
+    //定义左高 右高 等高
     private static final int LH = 1;
     private static final int RH = -1;
     private static final int EH = 0;
 
-    public static int c = 0 ;
-
-
-    private int depth;
     private AVLTreeNode<E> root;
 
     private boolean taller = false;
     private boolean shorter = false;
 
-    AVLTreeNode<E> CANFIND = new AVLTreeNode<>();
+    //找不到节点的返回值
+    private AVLTreeNode<E> CANFIND = new AVLTreeNode<>();
 
     @Override
     public String toString()
@@ -125,17 +126,39 @@ public class AVLTree<E extends Comparable<E>> {
         }
     }
 
+    //清除树
     public void clear() {
         root = null;
         taller = false;
+        shorter=false;
     }
 
+    //删除节点
     public void delete(E element) {
-        c++;
         this.root = delete(element, root);
 
     }
 
+    //分裂树
+    public AVLTree<E>[] split(E element){
+        AVLTree<E>[] trees = new AVLTree[2];
+        AVLTree<E> treeleft = new AVLTree<>();
+        AVLTree<E> treeright = new AVLTree<>();
+        AVLTreeIterator<E> iterator = this.iterator();
+        while(iterator.hasNext()){
+            E e = iterator.next();
+            if(e.compareTo(element) <= 0){
+                treeleft.insert(e);
+            }else{
+                treeright.insert(e);
+            }
+        }
+        trees[0] = treeleft;
+        trees[1] = treeright;
+        return trees;
+    }
+
+    //从左子树的最大节点中寻找替代节点
     private AVLTreeNode<E> findLeftMaxNode(AVLTreeNode<E> start) {
         if (start == null) return null;
         AVLTreeNode<E> node = start.lChild;
@@ -143,17 +166,6 @@ public class AVLTree<E extends Comparable<E>> {
 
         while (node.rChild != null) {
             node = node.rChild;
-        }
-        return node;
-    }
-
-    private AVLTreeNode<E> findRightMaxNode(AVLTreeNode<E> start) {
-        if (start == null) return null;
-        AVLTreeNode<E> node = start.rChild;
-        if (node == null) return null;
-
-        while (node.lChild != null) {
-            node = start.lChild;
         }
         return node;
     }
@@ -217,8 +229,6 @@ public class AVLTree<E extends Comparable<E>> {
             }
             //从右子树中删除
         } else if (cmpResult > 0) {
-//            node.rChild = delete(element, node.rChild);
-
             AVLTreeNode<E> deleted = delete(element,node.rChild);
             if(deleted != CANFIND) {
                 node.rChild = deleted;
@@ -268,7 +278,6 @@ public class AVLTree<E extends Comparable<E>> {
                         shorter = node.rChild.balance != EH;
                         node = rightBalance(node);
                         if(node.rChild == null){
-                            System.out.println(new Gson().toJson(node));
                             System.out.println("null of rChild");
                         }
 
@@ -282,7 +291,13 @@ public class AVLTree<E extends Comparable<E>> {
         return node;
     }
 
+    public void combine(AVLTree<E> another){
+        for(E e : another.iterator()){
+            this.insert(e);
+        }
+    }
 
+    //左旋操作,返回选后根节点
     private AVLTreeNode<E> leftRotate(AVLTreeNode<E> treeNode) {
         AVLTreeNode<E> node = treeNode.rChild;
         treeNode.rChild = node.lChild;
@@ -290,6 +305,7 @@ public class AVLTree<E extends Comparable<E>> {
         return node;
     }
 
+    //右旋操作,返回选后根节点
     private AVLTreeNode<E> rightRoate(AVLTreeNode<E> treeNode) {
         AVLTreeNode<E> node = treeNode.lChild;
         treeNode.lChild = node.rChild;
@@ -297,6 +313,7 @@ public class AVLTree<E extends Comparable<E>> {
         return node;
     }
 
+    //右平衡
     private AVLTreeNode<E> rightBalance(AVLTreeNode<E> node) {
         switch (node.rChild.balance) {
 
@@ -332,7 +349,7 @@ public class AVLTree<E extends Comparable<E>> {
                 break;
 
 
-                //删除左子树救节点的时候,右边出现不平衡
+                //删除左子树节点的时候,右边出现不平衡
             case EH:
                 //删除出现的情况
                 System.out.println("执行");
@@ -345,6 +362,7 @@ public class AVLTree<E extends Comparable<E>> {
         return node;
     }
 
+    //左平衡
     private AVLTreeNode<E> leftBalance(AVLTreeNode<E> node) {
 
         switch (node.lChild.balance) {
@@ -398,12 +416,17 @@ public class AVLTree<E extends Comparable<E>> {
 
     }
 
+    //获取该中序遍历树的一个迭代器
     public AVLTreeIterator<E> iterator() {
         return new AVLTreeIterator<>(root);
     }
 
+    //获取树的根节点
     public AVLTreeNode<E> getRoot() {
         return root;
     }
+
+
+
 }
 

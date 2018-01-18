@@ -1,5 +1,10 @@
 package queue;
 
+
+/**
+ * 简易的链队列
+ * @param <E>
+ */
 public class LinkQueue<E> extends AbsQueue<E> {
 
     private LinkQueueNode<E> root;

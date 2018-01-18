@@ -3,7 +3,7 @@ package avl_tree;
 
 import static avl_tree.AVLTreeNodeStatus.*;
 
-public class AVLTreeNode<E extends Comparable<E>> implements Cloneable {
+public class AVLTreeNode<E extends Comparable<E>>   {
 
     public E data;
     public int balance;
@@ -20,34 +20,12 @@ public class AVLTreeNode<E extends Comparable<E>> implements Cloneable {
         return lChild == null && rChild == null;
     }
 
+    //获取AVLTree的孩子状态,即左边有,还是右边有,还是两边都有孩子,或是没有孩子节点.
     public AVLTreeNodeStatus childTreeStatus() {
         if (isLeaf()) return NONE;
         if (lChild == null && rChild != null) return RIGHT;
         if (lChild != null && rChild == null) return LEFT;
         return BOTH;
-    }
-
-    @Override
-    protected AVLTreeNode<E> clone() {
-
-        AVLTreeNode<E> lc = null;
-        AVLTreeNode<E> rc = null;
-        AVLTreeNode<E> root = null;
-
-        if (lChild != null)
-            lc = (AVLTreeNode<E>) lChild.clone();
-
-        if (rChild != null)
-            rc = (AVLTreeNode<E>) rChild.clone();
-
-        try {
-            root = (AVLTreeNode<E>) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        root.lChild = lc;
-        root.rChild = rc;
-        return root;
     }
 }
 

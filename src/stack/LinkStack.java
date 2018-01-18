@@ -1,6 +1,10 @@
 package stack;
 
 
+/**
+ * 简易的链栈
+ * @param <E>
+ */
 public class LinkStack<E> extends AbsStack<E> {
 
     private StackNode<E> head ;
